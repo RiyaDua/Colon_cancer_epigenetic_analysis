@@ -1,0 +1,142 @@
+---
+title: "Chipseq"
+author: "riya"
+date: "2024-07-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+#loading libraries----
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("DiffBind")
+library(DiffBind)
+library(tidyverse)
+library(rtracklayer)
+library(ggplot2)
+```
+
+
+```{r}
+#loading data----
+setwd("/home/rdua5/scr4_heaswar1/Riya/ftp.activemotif.com/FASTQ")
+samples <- read.csv("/home/rdua5/scr4_heaswar1/Riya/ftp.activemotif.com/FASTQ/metadata.csv")
+names(samples)
+
+metadata <- dba(sampleSheet="/home/rdua5/scr4_heaswar1/Riya/ftp.activemotif.com/FASTQ/metadata.csv")
+metadata
+plot(metadata)
+head(metadata$peaks[[1]])
+
+```
+
+```{r}
+#plotting Occupany Analysis----
+dba.plotHeatmap(metadata, margin = 15)
+```
+
+```{r}
+#counting reads----
+metadata.counted <- dba.count(metadata)
+metadata.counted
+info <- dba.show(metadata.counted)
+libsizes <- cbind(LibReads=info$Reads, FRiP=info$FRiP,
+                  PeakReads=round(info$Reads * info$FRiP))
+rownames(libsizes) <- info$ID
+libsizes
+
+```
+```{r}
+#normalization----
+metadata.counted.norm<- dba.normalize(metadata.counted)
+norm <- dba.normalize(metadata.counted.norm, bRetrieve=TRUE)
+norm
+
+normlibs <- cbind(FullLibSize=norm$lib.sizes, NormFacs=norm$norm.factors,
+                  NormLibSize=round(norm$lib.sizes/norm$norm.factors))
+rownames(normlibs) <- info$ID
+normlibs
+#where are we using normalized data?
+```
+
+```{r}
+#contrast AND differential Analysis----
+#DESeq2 defualt analysis
+metadata.counted.cont <- dba.contrast(metadata.counted.norm,
+                                 categories = DBA_CONDITION)
+
+samples_summary <- dba.show(metadata.counted.cont)
+print(samples_summary)
+
+metadata.counted.analyzed<- dba.analyze(metadata.counted.cont)
+dba.show(metadata.counted.analyzed, bContrast= TRUE)
+```
+
+```{r}
+#plotting counted PCA----
+dba.plotHeatmap(metadata.counted, margin =20)
+dba.plotPCA(metadata.counted,  attributes= DBA_TISSUE, label=DBA_FACTOR, dotSize= 0.75, labelSize=0.75)
+dba.plotPCA(metadata.counted,  attributes= DBA_FACTOR, label=DBA_TISSUE, dotSize= 0.75, labelSize=0.75)
+
+
+samples[,DBA_TISSUE]
+samples[,DBA_FACTOR]
+samples[,DBA_CONDITION]
+samples[,DBA_GROUP]
+samples[,DBA_ID]
+
+
+
+
+###WORKING!!
+samples <- dba.show(metadata.counted)
+# Get unique tissues
+unique_factors <- unique(samples$Factor)
+
+# Loop through each unique tissue type and create a PCA plot
+for (factor in unique_factors) {
+  # Subset indices for current tissue
+  factor_indices <- which(samples$Factor == factor)
+  
+  # Subset DBA object
+  subset_data <- dba(metadata.counted, mask = factor_indices)
+  
+  # Plot PCA for the subset data
+  dba.plotPCA(subset_data, attributes=DBA_TISSUE, label=DBA_CONDITION, dotSize=0.75, labelSize=0.75)
+}
+
+
+##SAVING ABOVE PLOTS!! WORKING
+samples <- dba.show(metadata.counted)
+# Get unique tissues
+unique_factors <- unique(samples$Factor)
+
+# Loop through each unique tissue type and create a PCA plot
+for (factor in unique_factors) {
+  # Subset indices for current tissue
+  factor_indices <- which(samples$Factor == factor)
+  # Define the filename for the PDF
+  pdf_filename <- paste0("PCA_plot_", factor, ".pdf")
+  
+  # Open PDF device
+  pdf(pdf_filename)
+  # Subset DBA object
+  subset_data <- dba(metadata.counted, mask = factor_indices)
+  
+  # Plot PCA for the subset data
+  dba.plotPCA(subset_data, attributes=DBA_TISSUE, label=DBA_CONDITION, dotSize=0.75, labelSize=0.75)
+  dev.off()
+}
+```
