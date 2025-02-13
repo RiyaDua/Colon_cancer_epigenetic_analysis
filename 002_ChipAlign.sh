@@ -1,6 +1,7 @@
 #!/bin/sh
 
 #  ChipAlign.sh
+# bash script for ChIP-seq data alignment and processing using tools like samtools, MACS2, and deepTools on an HPC cluster with SLURM.
 
 module restore
 module load samtools/1.10
