@@ -1,19 +1,8 @@
 ---
 title: "Chipseq"
 author: "riya"
-date: "2024-07-24"
-output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r}
 #loading libraries----
@@ -31,11 +20,11 @@ library(ggplot2)
 
 ```{r}
 #loading data----
-setwd("/home/rdua5/scr4_heaswar1/Riya/ftp.activemotif.com/FASTQ")
-samples <- read.csv("/home/rdua5/scr4_heaswar1/Riya/ftp.activemotif.com/FASTQ/metadata.csv")
+setwd("/path/to/my/data")
+samples <- read.csv("/path/to/my/data.csv")
 names(samples)
 
-metadata <- dba(sampleSheet="/home/rdua5/scr4_heaswar1/Riya/ftp.activemotif.com/FASTQ/metadata.csv")
+metadata <- dba(sampleSheet="/path/to/my/metadata.csv")
 metadata
 plot(metadata)
 head(metadata$peaks[[1]])
@@ -68,7 +57,6 @@ normlibs <- cbind(FullLibSize=norm$lib.sizes, NormFacs=norm$norm.factors,
                   NormLibSize=round(norm$lib.sizes/norm$norm.factors))
 rownames(normlibs) <- info$ID
 normlibs
-#where are we using normalized data?
 ```
 
 ```{r}
@@ -99,43 +87,28 @@ samples[,DBA_ID]
 
 
 
-
-###WORKING!!
 samples <- dba.show(metadata.counted)
-# Get unique tissues
+
 unique_factors <- unique(samples$Factor)
 
-# Loop through each unique tissue type and create a PCA plot
+
 for (factor in unique_factors) {
-  # Subset indices for current tissue
   factor_indices <- which(samples$Factor == factor)
-  
-  # Subset DBA object
   subset_data <- dba(metadata.counted, mask = factor_indices)
-  
-  # Plot PCA for the subset data
   dba.plotPCA(subset_data, attributes=DBA_TISSUE, label=DBA_CONDITION, dotSize=0.75, labelSize=0.75)
 }
 
 
-##SAVING ABOVE PLOTS!! WORKING
+
 samples <- dba.show(metadata.counted)
-# Get unique tissues
 unique_factors <- unique(samples$Factor)
 
-# Loop through each unique tissue type and create a PCA plot
+# Looping through each unique tissue type and create a PCA plot
 for (factor in unique_factors) {
-  # Subset indices for current tissue
   factor_indices <- which(samples$Factor == factor)
-  # Define the filename for the PDF
   pdf_filename <- paste0("PCA_plot_", factor, ".pdf")
-  
-  # Open PDF device
   pdf(pdf_filename)
-  # Subset DBA object
   subset_data <- dba(metadata.counted, mask = factor_indices)
-  
-  # Plot PCA for the subset data
   dba.plotPCA(subset_data, attributes=DBA_TISSUE, label=DBA_CONDITION, dotSize=0.75, labelSize=0.75)
   dev.off()
 }
