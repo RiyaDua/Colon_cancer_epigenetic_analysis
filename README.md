@@ -38,12 +38,12 @@ Performed in **R** using:
 
 ## Running the Pipeline
 1. **Submit FastQC.sh** – Raw data quality control and trimming
-2. **Submit ChipAlign.sh** – Read alignment, SAM→BAM conversion, indexing
+2. **Submit ChipAlign.sh** – Read alignment, SAM to BAM conversion, indexing
 3. **Submit computeMatrixmm10.sh** – Coverage matrix and heatmaps (deepTools)
 4. **Submit ChromHMM.sh** – Chromatin state segmentation
 5. **Run DiffBind in R** – Differential binding analysis
 
 ## Data Availability
-**Due to privacy and publication restrictions**, raw data is not provided. This repository contains generalizable scripts and analysis workflow.
+Due to privacy and publication restrictions, raw data is not provided. This repository contains generalizable scripts and analysis workflow.
 
 
