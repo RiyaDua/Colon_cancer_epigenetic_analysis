@@ -1,10 +1,10 @@
 
 # Charting the Epigenetic Dynamics in Colon Carcinogenesis using ChIP-Seq Analysis Techniques
 
-This repository contains the scripts and workflow for the **ChIP-Seq data analysis project** aimed at **mapping epigenetic changes associated with BRAF V600E mutations in colon cancer**.
+This repository contains the scripts and workflow for the ChIP-Seq data analysis project aimed at mapping epigenetic changes associated with BRAF V600E mutations in colon cancer.
 
 ## Project Overview
-The goal of this project was to **investigate the chromatin landscape and identify epigenetic changes during colon carcinogenesis** driven by **BRAF V600E mutations**. **ChIP-Seq data** was analyzed to profile histone modifications and understand the epigenetic regulation of gene expression in colon cancer.
+The goal of this project was to investigate the chromatin landscape and identify epigenetic changes during colon carcinogenesis driven by BRAF V600E mutations. ChIP-Seq data was analyzed to profile histone modifications and understand the epigenetic regulation of gene expression in colon cancer.
 
 ## Key Steps in Analysis Pipeline
 
